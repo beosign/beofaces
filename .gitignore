@@ -1,0 +1,4 @@
+WebContent/WEB-INF/classes/
+bin
+build
+\.gradle
