@@ -31,3 +31,21 @@ dependencies {
     
 }
 
+war {
+    rootSpec.exclude('**/sqllog/**')
+}
+
+task wildflySqlLoggingFilterJar(type: Jar, dependsOn: compileJava) {
+    baseName = 'wildfly-sqllogging-filter'
+    from sourceSets.main.output
+         include '**/sqllog/wf/*.class'
+         include '**/sqllog/*.class'
+    
+    from('src/main/java/de/beosign/beofaces/sqllog/wf/') {
+         include '*.xml' into '/META-INF'
+         include 'readme.txt' into '/META-INF'
+    }
+    
+   
+}
+
