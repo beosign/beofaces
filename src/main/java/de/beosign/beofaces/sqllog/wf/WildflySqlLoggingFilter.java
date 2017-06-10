@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.beosign.beofaces.sqllog.SqlLogEvent;
 import de.beosign.beofaces.sqllog.SqlLogEventListener;
 
 /**
@@ -152,7 +153,7 @@ public class WildflySqlLoggingFilter implements Filter {
                     .filter(line -> line != null && !line.isEmpty())
                     .collect(Collectors.groupingBy(line -> line.toString().split("\\s")[0]));
 
-            sqlLogEventListener.logEvent((HttpServletRequest) req, groupedStrings);
+            sqlLogEventListener.logEvent(new SqlLogEvent((HttpServletRequest) req, groupedStrings));
         }
 
     }

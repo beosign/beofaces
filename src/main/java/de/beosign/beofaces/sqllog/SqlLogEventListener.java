@@ -1,10 +1,15 @@
 package de.beosign.beofaces.sqllog;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+/**
+ * Listens to SQL logging events.
+ * 
+ * @author florian
+ */
 public interface SqlLogEventListener {
-    void logEvent(HttpServletRequest request, Map<String, List<String>> operationsMap);
+    /**
+     * Called at the end of a JSF request. Implementations can now log the executed sql statements.
+     * 
+     * @param sqlLogEvent event object
+     */
+    void logEvent(SqlLogEvent sqlLogEvent);
 }

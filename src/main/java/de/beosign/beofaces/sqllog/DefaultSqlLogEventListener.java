@@ -12,7 +12,10 @@ public class DefaultSqlLogEventListener implements SqlLogEventListener {
     private static final Logger log = LoggerFactory.getLogger(DefaultSqlLogEventListener.class);
 
     @Override
-    public void logEvent(HttpServletRequest request, Map<String, List<String>> operationsMap) {
+    public void logEvent(SqlLogEvent sqlLogEvent) {
+        HttpServletRequest request = sqlLogEvent.getRequest();
+        Map<String, List<String>> operationsMap = sqlLogEvent.getOperationsMap();
+
         operationsMap.entrySet().forEach(entry -> {
             String event = "GET";
             String source = "<null>";
