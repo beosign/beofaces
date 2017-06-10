@@ -1,7 +1,7 @@
 <web-fragment>
     <filter>
         <filter-name>WildflySqlLoggingFilter</filter-name>
-        <filter-class>de.beosign.beotracker.sqllog.wf.WildflySqlLoggingFilter</filter-class>
+        <filter-class>de.beosign.beofaces.sqllog.wf.WildflySqlLoggingFilter</filter-class>
         <init-param>
             <param-name>logfile</param-name>
             <param-value>../standalone/log/sql.log</param-value>
