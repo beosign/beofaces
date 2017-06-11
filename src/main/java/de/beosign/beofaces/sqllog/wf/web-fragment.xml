@@ -2,9 +2,6 @@
     <filter>
         <filter-name>WildflySqlLoggingFilter</filter-name>
         <filter-class>de.beosign.beofaces.sqllog.wf.WildflySqlLoggingFilter</filter-class>
-        <init-param>
-            <param-name>logfile</param-name>
-            <param-value>../standalone/log/sql.log</param-value>
-        </init-param>
     </filter>
+    <!-- Init parameters can be set here to override those given by annotations within the filter class -->
 </web-fragment>
