@@ -35,9 +35,13 @@ war {
     rootSpec.exclude('**/sqllog/**')
 }
 
+/**
+ * Builds the SqlLoggingFilter for Wildfly. Includes the Java classes and a web-fragment.xml.
+ */ 
 task wildflySqlLoggingFilterJar(type: Jar, dependsOn: compileJava) {
     baseName = 'wildfly-sqllogging-filter'
     from sourceSets.main.output
+         include '**/sqllog/slf4j/*.class'
          include '**/sqllog/wf/*.class'
          include '**/sqllog/*.class'
     

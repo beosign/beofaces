@@ -78,7 +78,7 @@ import de.beosign.beofaces.sqllog.SqlLogEventListener;
         urlPatterns = { "*.xhtml" },
         initParams = { //
                 @WebInitParam(name = "logfile", value = "../standalone/log/sql.log"), //
-                @WebInitParam(name = "logEventListenerClass", value = "de.beosign.beofaces.sqllog.DefaultSqlLogEventListener") //
+                @WebInitParam(name = "logEventListenerClass", value = "de.beosign.beofaces.sqllog.slf4j.Slf4jSqlLogEventListener") //
         })
 public class WildflySqlLoggingFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(WildflySqlLoggingFilter.class);

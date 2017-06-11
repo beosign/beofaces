@@ -1,4 +1,7 @@
-Logging Filter for Wildfly for monitoring the nummber of sql statements during <b>development</b>. In order to make it work, create the following entries in
+Logging Filter for Wildfly for monitoring the nummber of sql statements during <b>development</b>.
+Depends on ***SLF4J***
+
+In order to make it work, create the following entries in
 standalone.xml:
 
 1. Create a logging handler. The path must match the init param of the filter, see below.

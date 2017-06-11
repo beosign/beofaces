@@ -1,4 +1,4 @@
-package de.beosign.beofaces.sqllog;
+package de.beosign.beofaces.sqllog.slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -8,8 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultSqlLogEventListener implements SqlLogEventListener {
-    private static final Logger log = LoggerFactory.getLogger(DefaultSqlLogEventListener.class);
+import de.beosign.beofaces.sqllog.SqlLogEvent;
+import de.beosign.beofaces.sqllog.SqlLogEventListener;
+
+/**
+ * Uses SLF4J to log.
+ * 
+ * @author florian
+ */
+public class Slf4jSqlLogEventListener implements SqlLogEventListener {
+    private static final Logger log = LoggerFactory.getLogger(Slf4jSqlLogEventListener.class);
 
     @Override
     public void logEvent(SqlLogEvent sqlLogEvent) {
