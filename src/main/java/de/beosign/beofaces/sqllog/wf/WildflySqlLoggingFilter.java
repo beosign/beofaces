@@ -17,6 +17,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +154,7 @@ public class WildflySqlLoggingFilter implements Filter {
                     .filter(line -> line != null && !line.isEmpty())
                     .collect(Collectors.groupingBy(line -> line.toString().split("\\s")[0]));
 
-            sqlLogEventListener.logEvent(new SqlLogEvent((HttpServletRequest) req, groupedStrings));
+            sqlLogEventListener.logEvent(new SqlLogEvent((HttpServletRequest) req, (HttpServletResponse) resp, groupedStrings));
         }
 
     }
