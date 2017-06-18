@@ -85,24 +85,34 @@ public class WildflySqlLoggingFilter implements Filter {
 
     private String logfileName;
     private SqlLogEventListener sqlLogEventListener;
-
-    public WildflySqlLoggingFilter() {
-    }
+    private boolean initSuccessful;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
         logfileName = config.getInitParameter("logfile");
         String listenerClassname = config.getInitParameter("logEventListenerClass");
 
+        File logfile = new File(logfileName);
+        if (!logfile.exists()) {
+            String errMsg = "Given logfile {} (full path: {}) does not exist. ";
+            errMsg += "Make sure you created a appropriate log handler in standalone.xml. ";
+            errMsg += "The logging filter will NOT WORK!";
+
+            log.error(errMsg, logfileName, logfile.getAbsolutePath());
+            initSuccessful = false;
+            return;
+        }
+
         log.info("Using logfile {} (full path: {}) for extracting sql statement information with listener class {}",
                 logfileName,
-                new File(logfileName).getAbsolutePath(),
+                logfile.getAbsolutePath(),
                 listenerClassname);
 
         try {
             @SuppressWarnings("unchecked")
             Class<? extends SqlLogEventListener> listenerClass = (Class<? extends SqlLogEventListener>) Class.forName(listenerClassname);
             sqlLogEventListener = listenerClass.newInstance();
+            initSuccessful = true;
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Listener class with name " + listenerClassname + " not found", e);
         } catch (ReflectiveOperationException e) {
@@ -116,6 +126,10 @@ public class WildflySqlLoggingFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+        if (!initSuccessful) {
+            chain.doFilter(req, resp);
+            return;
+        }
 
         if (isFacesRequest((HttpServletRequest) req)) {
             // clear logfile
