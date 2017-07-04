@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.Filter;
@@ -21,13 +22,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import de.beosign.beofaces.sqllog.SqlLogEvent;
 import de.beosign.beofaces.sqllog.SqlLogEventListener;
 
 /**
- * Logging Filter for Wildfly for monitoring the nummber of sql statements during <b>development</b>. In order to make it work, create the following entries in
- * standalone.xml:
+ * Logging Filter (SLF4J) for Wildfly for monitoring the number of sql statements during <b>development</b>. In order to make it work, create the following
+ * entries in <b>standalone.xml</b>:
  * <br/>
  * <br/>
  * 1. Create a logging handler. The path must match the init param of the filter, see below.
@@ -35,7 +37,7 @@ import de.beosign.beofaces.sqllog.SqlLogEventListener;
  * <pre>
  *    &lt;file-handler name="SQL" autoflush="true"&gt;
  *        &lt;formatter&gt;
- *            &lt;named-formatter name="PATTERN"/&gt;
+ *            &lt;pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [ID=%X{id}] %-5p [%c:::%M] (%t) %s%e%n"/&gt;
  *        &lt;/formatter&gt;
  *        &lt;file relative-to="jboss.server.log.dir" path="sql.log"/&gt;
  *        &lt;append value="false"/&gt;
@@ -66,22 +68,22 @@ import de.beosign.beofaces.sqllog.SqlLogEventListener;
  *   &lt;/filter&gt;
  * </pre>
  * <p>
- * <b>Restrictions:</b>
+ * <b>Limitations:</b>
  * <ul>
- * <li>Only works for a single user; if multiple users interact with the system at the same time (no concurrent users supported)</li>
+ * <li>Does not work when multiple users are interacting with the system; however, sql statements issued from background processed are not counted and thus do
+ * not influence the number of statements issued by the user.</li>
  * </ul>
  * 
  * @author florian
  */
-@WebFilter(
-        filterName = "WildflySqlLoggingFilter",
-        urlPatterns = { "*.xhtml" },
-        initParams = { //
-                @WebInitParam(name = "logfile", value = "../standalone/log/sql.log"), //
-                @WebInitParam(name = "logEventListenerClass", value = "de.beosign.beofaces.sqllog.slf4j.Slf4jSqlLogEventListener") //
-        })
+@WebFilter(filterName = "WildflySqlLoggingFilter", urlPatterns = { "*.xhtml" }, initParams = { //
+        @WebInitParam(name = "logfile", value = "../standalone/log/sql.log"), //
+        @WebInitParam(name = "logEventListenerClass", value = "de.beosign.beofaces.sqllog.slf4j.Slf4jSqlLogEventListener") //
+})
 public class WildflySqlLoggingFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(WildflySqlLoggingFilter.class);
+
+    private static final String MDC_ID = "id";
 
     private String logfileName;
     private SqlLogEventListener sqlLogEventListener;
@@ -103,9 +105,9 @@ public class WildflySqlLoggingFilter implements Filter {
             return;
         }
 
-        log.info("Using logfile {} (full path: {}) for extracting sql statement information with listener class {}",
-                logfileName,
-                logfile.getAbsolutePath(),
+        log.info("Using logfile {} (full path: {}) for extracting sql statement information with listener class {}", //
+                logfileName, //
+                logfile.getAbsolutePath(), //
                 listenerClassname);
 
         try {
@@ -131,8 +133,11 @@ public class WildflySqlLoggingFilter implements Filter {
             return;
         }
 
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+
         if (isFacesRequest((HttpServletRequest) req)) {
             // clear logfile
+            MDC.put(MDC_ID, uuid);
             try {
                 File file = new File(logfileName);
                 try (FileWriter fw = new FileWriter(file)) {
@@ -149,7 +154,9 @@ public class WildflySqlLoggingFilter implements Filter {
         if (isFacesRequest((HttpServletRequest) req)) {
             File file = new File(logfileName);
             // evaluate entries in logfile
-            Map<String, List<String>> groupedStrings = Files.lines(file.toPath())
+            Map<String, List<String>> groupedStrings = Files.lines(file.toPath())//
+                    .filter(line -> line != null && !line.isEmpty())//
+                    .filter(line -> line.contains(uuid))//
                     .map(line -> {
                         if (line.indexOf("select") >= 0) {
                             return line.substring(line.indexOf("select"));
@@ -164,17 +171,16 @@ public class WildflySqlLoggingFilter implements Filter {
                             return line.substring(line.indexOf("update"));
                         }
                         return "";
-                    })
-                    .filter(line -> line != null && !line.isEmpty())
-                    .collect(Collectors.groupingBy(line -> line.toString().split("\\s")[0]));
+                    }).collect(Collectors.groupingBy(line -> line.toString().split("\\s")[0]));
 
             sqlLogEventListener.logEvent(new SqlLogEvent((HttpServletRequest) req, (HttpServletResponse) resp, groupedStrings));
+            MDC.remove(MDC_ID);
         }
 
     }
 
     /**
-     * Checks if an xhtml (facelet) is requested (and not jsut a resource like css or js).
+     * Checks if an xhtml (facelet) is requested (and not just a resource like css or js).
      * 
      * @param request request
      */

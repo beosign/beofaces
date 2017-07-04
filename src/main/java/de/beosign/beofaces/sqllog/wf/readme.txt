@@ -5,11 +5,12 @@ In order to make it work, create the following entries in
 standalone.xml:
 
 1. Create a logging handler. The path must match the init param of the filter, see below.
+   It's important that the pattern format includes the MDC "id" variable so background processes can be filtered out when counting.
 
 
    <file-handler name="SQL" autoflush="true">
        <formatter>
-           <named-formatter name="PATTERN"/>
+           <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [ID=%X{id}] %-5p [%c:::%M] (%t) %s%e%n"/>
        </formatter>
        <file relative-to="jboss.server.log.dir" path="sql.log"/>
        <append value="false"/>
