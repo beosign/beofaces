@@ -17,7 +17,7 @@ standalone.xml:
    </file-handler>
 </pre>
 
-2. Create a logger and associate the above handler with it
+2. Create a logger and associate the above handler with it. Optionally, you can add "use-parent-handlers="false"" to the logger to NOT show each sql statement in your main log (console).
 
    <logger category="org.hibernate.SQL">
        <level name="DEBUG"/>
@@ -25,6 +25,8 @@ standalone.xml:
           <handler name="SQL"/>
        </handlers>
    </logger>
+   
+3. Configure your logging properties to log package "de.beosign" on level TRACE
 
 
 In addition, be sure that the path to the logfile is correct. To change the path to fit your needs, change the following in the web-fragment.xml file:
