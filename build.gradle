@@ -42,10 +42,10 @@ task wildflySqlLoggingFilterJar(type: Jar, dependsOn: compileJava) {
     baseName = 'wildfly-sqllogging-filter'
     from sourceSets.main.output
          include '**/sqllog/slf4j/*.class'
-         include '**/sqllog/wf/*.class'
+         include '**/sqllog/wildfly/*.class'
          include '**/sqllog/*.class'
     
-    from('src/main/java/de/beosign/beofaces/sqllog/wf/') {
+    from('src/main/java/de/beosign/beofaces/sqllog/wildfly/') {
          include '*.xml' into '/META-INF'
          include 'readme.txt' into '/META-INF'
     }

@@ -5,7 +5,7 @@
 
   <filter>
     <filter-name>WildflySqlLoggingFilter</filter-name>
-    <filter-class>de.beosign.beofaces.sqllog.wf.WildflySqlLoggingFilter</filter-class>
+    <filter-class>de.beosign.beofaces.sqllog.wildfly.WildflySqlLoggingFilter</filter-class>
   </filter>
 
   <!-- Init parameters can be set here to override those given by annotations within the filter class -->

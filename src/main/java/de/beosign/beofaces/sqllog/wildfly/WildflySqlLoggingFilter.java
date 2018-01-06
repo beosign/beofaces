@@ -1,4 +1,4 @@
-package de.beosign.beofaces.sqllog.wf;
+package de.beosign.beofaces.sqllog.wildfly;
 
 import java.io.File;
 import java.io.FileWriter;
