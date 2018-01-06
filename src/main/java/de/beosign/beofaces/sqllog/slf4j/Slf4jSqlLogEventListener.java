@@ -26,12 +26,16 @@ public class Slf4jSqlLogEventListener implements SqlLogEventListener {
 
         operationsMap.entrySet().forEach(entry -> {
             String event = "GET";
-            String source = "<null>";
+            String source = null;
             if (request.getParameter("javax.faces.partial.ajax") != null) {
                 event = request.getParameter("javax.faces.partial.event");
                 source = request.getParameter("javax.faces.source");
             }
-            log.trace(request.getRequestURI().toString() + "(" + source + "," + event + "): " + entry.getKey() + ": " + entry.getValue().size());
+            if ("GET".equals(event)) {
+                log.trace(request.getRequestURI().toString() + "(" + event + "): " + entry.getKey() + ": " + entry.getValue().size());
+            } else {
+                log.trace(request.getRequestURI().toString() + "(" + source + "," + event + "): " + entry.getKey() + ": " + entry.getValue().size());
+            }
         });
 
     }
