@@ -12,6 +12,8 @@ repositories {
     mavenCentral()
 } 
 
+project.group="de.beosign.beofaces"
+project.version="0.1.0"
 
 sourceCompatibility=1.8
 targetCompatibility=1.8
@@ -34,6 +36,24 @@ dependencies {
 war {
     rootSpec.exclude('**/sqllog/**')
 }
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
+
+
+jar {
+    baseName = 'beofaces'
+}
+
 
 /**
  * Builds the SqlLoggingFilter for Wildfly. Includes the Java classes and a web-fragment.xml.
