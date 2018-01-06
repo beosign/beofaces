@@ -49,7 +49,19 @@ task wildflySqlLoggingFilterJar(type: Jar, dependsOn: compileJava) {
          include '*.xml' into '/META-INF'
          include 'readme.txt' into '/META-INF'
     }
+}
+
+/**
+ * Builds a jar that contains the event handling features only. The Phase Listeners are included in a faces-config.xml and thus installed automatically.
+ */ 
+task beofacesEventsJar(type: Jar, dependsOn: compileJava) {
+    baseName = 'beofaces-events'
+    from sourceSets.main.output
+         include 'de/beosign/beofaces/event/**/*.class'
     
-   
+    from('src/main/java/de/beosign/beofaces/event/') {
+         include '*.xml' into '/META-INF'
+         include 'readme.txt' into '/META-INF'
+    }
 }
 
