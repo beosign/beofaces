@@ -158,17 +158,18 @@ public class WildflySqlLoggingFilter implements Filter {
                     .filter(line -> line != null && !line.isEmpty())//
                     .filter(line -> line.contains(uuid))//
                     .map(line -> {
-                        if (line.indexOf("select") >= 0) {
-                            return line.substring(line.indexOf("select"));
+                        String lowercaseLine = line.toLowerCase();
+                        if (lowercaseLine.indexOf("select") >= 0) {
+                            return line.substring(lowercaseLine.indexOf("select"));
                         }
-                        if (line.indexOf("insert") >= 0) {
-                            return line.substring(line.indexOf("insert"));
+                        if (lowercaseLine.indexOf("insert") >= 0) {
+                            return line.substring(lowercaseLine.indexOf("insert"));
                         }
-                        if (line.indexOf("delete") >= 0) {
-                            return line.substring(line.indexOf("delete"));
+                        if (lowercaseLine.indexOf("delete") >= 0) {
+                            return line.substring(lowercaseLine.indexOf("delete"));
                         }
-                        if (line.indexOf("update") >= 0) {
-                            return line.substring(line.indexOf("update"));
+                        if (lowercaseLine.indexOf("update") >= 0) {
+                            return line.substring(lowercaseLine.indexOf("update"));
                         }
                         return "";
                     }).collect(Collectors.groupingBy(line -> line.toString().split("\\s")[0]));
