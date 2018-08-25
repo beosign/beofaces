@@ -6,6 +6,7 @@
 >
     <name>beofaces_events</name>
 
+        
     <ordering>
         <after>
             <others />
@@ -15,4 +16,12 @@
     <lifecycle>
         <phase-listener>de.beosign.beofaces.event.AfterRenderResponseEventPhaseListener</phase-listener>
     </lifecycle>
+
+    <application>
+      <system-event-listener>
+          <system-event-listener-class>de.beosign.beofaces.event.ViewRootAddedToViewEventListener</system-event-listener-class>
+          <system-event-class>javax.faces.event.PostAddToViewEvent</system-event-class>
+          <source-class>javax.faces.component.UIViewRoot</source-class>
+      </system-event-listener>
+    </application>
 </faces-config>    
